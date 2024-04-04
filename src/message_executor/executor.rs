@@ -37,7 +37,7 @@ pub struct ExecutionRecord {
 }
 
 #[derive(Getters, MutGetters)]
-pub struct SBPFMessageExecutor {
+pub struct MessageExecutor {
     pub(crate) feature_set: Arc<FeatureSet>,
     #[getset(get_mut = "pub", get = "pub")]
     sysvar_cache: SysvarCache,
@@ -48,9 +48,9 @@ pub struct SBPFMessageExecutor {
     pub(crate) loaded_programs: LoadedPrograms,
 }
 
-unsafe impl Send for SBPFMessageExecutor {}
+unsafe impl Send for MessageExecutor {}
 
-impl SBPFMessageExecutor {
+impl MessageExecutor {
     #[throws(Error)]
     pub fn new(enabled_features: &[Pubkey]) -> Self {
         let mut features = FeatureSet::default();

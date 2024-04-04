@@ -8,7 +8,7 @@ use solana_rbpf06::vm::BuiltinProgram;
 use solana_sdk::{account::AccountSharedData, feature_set::FeatureSet, pubkey::Pubkey};
 use std::{collections::HashSet, sync::Arc};
 
-use super::SBPFMessageExecutor;
+use super::{ForkGraph, MessageExecutor};
 
 pub struct AccountLoader<'a, G> {
     g: G,
@@ -38,7 +38,7 @@ impl<'a, G> AccountLoader<'a, G> {
         }
     }
 
-    pub fn from_executor(g: G, e: &'a mut SBPFMessageExecutor) -> Self {
+    pub fn from_executor(g: G, e: &'a mut MessageExecutor) -> Self {
         Self::new(
             g,
             &mut e.loaded_programs,
