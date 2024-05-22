@@ -3421,6 +3421,7 @@ dependencies = [
  "serde",
  "solana-bpf-loader-program",
  "solana-client",
+ "solana-loader-v4-program",
  "solana-program-runtime",
  "solana-runtime",
  "solana-sdk",

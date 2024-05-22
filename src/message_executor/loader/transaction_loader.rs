@@ -17,25 +17,30 @@ impl<'a, G> AccountLoader<'a, G>
 where
     G: FnMut(&Pubkey) -> Option<AccountSharedData>,
 {
+
+    fn construct_instructions_account(message: &SanitizedMessage) -> AccountSharedData {
+      AccountSharedData::from(Account {
+        data: construct_instructions_data(&message.decompile_instructions()),
+        owner: sysvar::id(),
+        ..Account::default()
+        })
+    }
+
     // Roughly solana_runtime::accounts::Accounts::load_transaction_accounts
     #[throws(Error)]
-    pub fn load_transaction_account(&mut self, msg: &SanitizedMessage) -> LoadedTransaction {
+    pub fn load_transaction_accounts(&mut self, msg: &SanitizedMessage) -> LoadedTransaction {
         let mut accounts =
             Vec::with_capacity(msg.account_keys().len() + msg.instructions().len() * 2);
 
         for &key in msg.account_keys().iter() {
             if solana_sdk::sysvar::instructions::check_id(&key) {
-                let acc = Account {
-                    data: construct_instructions_data(&msg.decompile_instructions()).into(),
-                    owner: sysvar::id(),
-                    ..Default::default()
-                };
+                let acc = Self::construct_instructions_account(msg);
                 accounts.push((key, acc.into()));
                 continue;
             }
 
             let account = self
-                .get_account(&key)?
+                .get_account_with_fixed_root(&key)?
                 .ok_or(TransactionError::AccountNotFound)?;
 
             accounts.push((key, account));
@@ -76,7 +81,7 @@ where
                     None => {
                         let owner_index = accounts.len();
                         let owner_account = self
-                            .get_account(owner_id)?
+                            .get_account_with_fixed_root(owner_id)?
                             .ok_or(TransactionError::ProgramAccountNotFound)?;
 
                         accounts.push((*owner_id, owner_account));

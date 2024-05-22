@@ -13,8 +13,7 @@ use super::{ForkGraph, MessageExecutor};
 pub struct AccountLoader<'a, G> {
     g: G,
     feature_set: &'a FeatureSet,
-    environment: Arc<BuiltinProgram<InvokeContext<'static>>>,
-    loaded_programs: &'a mut LoadedPrograms,
+    loaded_programs_cache: &'a mut LoadedPrograms,
     program_owners: &'a HashSet<Pubkey>,
     builtin_programs: &'a HashSet<Pubkey>,
 }
@@ -31,8 +30,7 @@ impl<'a, G> AccountLoader<'a, G> {
         Self {
             g,
             feature_set,
-            environment,
-            loaded_programs,
+            loaded_programs_cache: loaded_programs,
             program_owners,
             builtin_programs,
         }
@@ -55,7 +53,7 @@ where
     G: FnMut(&Pubkey) -> Option<AccountSharedData>,
 {
     #[throws(Error)]
-    fn get_account(&mut self, key: &Pubkey) -> Option<AccountSharedData> {
+    fn get_account_with_fixed_root(&mut self, key: &Pubkey) -> Option<AccountSharedData> {
         (self.g)(&key)
     }
 }

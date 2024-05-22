@@ -39,8 +39,10 @@ url = { version = "2" }
 clap = {version = "~4.1", features = ["derive", "env"] }
 solana_rbpf06 = { version = "~0.6", package = "solana_rbpf" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "registry"] }
+solana-loader-v4-program = "~1.16.24"
 
 # [patch.crates-io]
+# solana-accounts-db = { path = "../solana-mole/accounts-db" }
 # solana-bpf-loader-program = { path = "../solana-mole/programs/bpf_loader" }
 # solana-client = { path = "../solana-mole/client" }
 # solana-program-runtime = { path = "../solana-mole/program-runtime" }
